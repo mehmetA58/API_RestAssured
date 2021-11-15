@@ -2,9 +2,14 @@ package com.techproed.day06;
 
 import com.techproed.testBase.DummyTestBase;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -21,17 +26,26 @@ public void test01(){
     //Toplam 24 tane çalışan olduğunu,
     //"Rhona Davidson" ın employee lerden biri olduğunu
     //"21", "23", "61" yaşlarında employeeler olduğunu test edin
-    spec03.pathParams("parametre","employees");
-    Response response=given()
-            .spec(spec03)
-            .when()
-            .get("/{parametre}");
+    spec03.pathParam("parametre1","employees");
+    Response response=given().
+            accept("application/json").
+            spec(spec03).
+            when().
+            get("/{parametre1}");
     response.prettyPrint();
-    response.then().assertThat().statusCode(200).contentType(ContentType.JSON);
-    Assert.assertEquals("Airi Satou",response.jsonPath().getString("data[4].employee_name"));
-    Assert.assertEquals(372000,response.jsonPath().getString("data[5].employee_salary"));
-    Assert.assertTrue(response.jsonPath().getList("data.employee_name").contains("Rhona Davidson"));
-    Assert.assertTrue(response.jsonPath().getList("data.employees_age").contains("21||23||61"));
+    JsonPath jsonPath=response.jsonPath();
+    Assert.assertEquals(200,response.getStatusCode());
+    // Assert.assertTrue(response.getStatusCode()==200);
+    System.out.println(jsonPath.getList("data.id").size());
+    Assert.assertEquals(24,jsonPath.getList("data.id").size());
+    Assert.assertEquals("Airi Satou",jsonPath.getString("data[4].employee_name"));
+    Assert.assertEquals(372000,jsonPath.getInt("data[5].employee_salary"));
+    Assert.assertTrue( jsonPath.getList("data.employee_name").contains("Rhona Davidson"));
+    List<Integer> arananYaslar= Arrays.asList(21,23,61);
+    Assert.assertTrue(jsonPath.getList("data.employee_age").containsAll(arananYaslar));
+
+
+
 
 }
 }
