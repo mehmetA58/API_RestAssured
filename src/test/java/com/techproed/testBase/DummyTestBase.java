@@ -4,6 +4,8 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Before;
 
+import java.util.HashMap;
+
 public class DummyTestBase {
     protected RequestSpecification spec03;
     @Before
@@ -12,5 +14,6 @@ public class DummyTestBase {
                 setBaseUri("http://dummy.restapiexample.com/api/v1").
                 build();
     }
+
 }
 
